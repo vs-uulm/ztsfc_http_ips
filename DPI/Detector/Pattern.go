@@ -11,16 +11,10 @@ var patternPathTrav = [1]string{
 }
 
 // Regular Expressions for SQL Injection
-<<<<<<< HEAD
 var regexSQLInject = [17]string{
 	"('|[0-9]+)(\\s)+(--|;)", // PATTERN CHANGED FROM ORIGINALLY:  "('|[0-9]+)(\\s)*(--|;)"
-	"'\\s*or\\s+.+\\s*=\\s*.+\\s*(--|;)",
-	"[0-9]+\\s*or\\s+.+\\s*=\\s*.+",
-=======
-var regexSQLInject = [16]string{
 	"'\\s*or\\s+[a-z0-9]+\\s*=\\s*[a-z0-9]+\\s*(--|;)",
 	"[0-9]+\\s*or\\s+[a-z0-9]+\\s*=\\s*[a-z0-9]+",
->>>>>>> 2922670d9695710464ab38dba8e2a701e23b768b
 	"'\\s*union(\\s+all)?\\s+select[ a-z0-9'\"\\*,_\\(\\)\\-]+from[ a-z0-9\\-_\\(\\)\\-]+(--|;)",
 	"[0-9]+\\s+union(\\s+all)?\\s+select[ a-z0-9'\"\\*,_\\(\\)\\-]+from[ a-z0-9\\-_\\(\\)\\-]+",
 	";\\s*select[ a-z0-9'\"\\*,_\\(\\)\\-]+from[ a-z0-9\\-_\\(\\)\\-]+(--|;)",

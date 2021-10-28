@@ -15,6 +15,9 @@ import (
 
     env "local.com/leobrada/ztsfc_http_sf_template/env"
     service_function "local.com/leobrada/ztsfc_http_sf_template/service_function"
+
+    // ARRIVAL TIME
+//    logrus "github.com/sirupsen/logrus"
 )
 
 const (
@@ -41,6 +44,9 @@ type Router struct {
 
     // Service function to be called for every incoming HTTP request
     sf service_function.ServiceFunction
+
+    // ARRIVAL TIME
+  //  requestReception *logrus.Logger
 }
 
 func NewRouter(_sf service_function.ServiceFunction) (*Router, error) {
@@ -78,6 +84,11 @@ func NewRouter(_sf service_function.ServiceFunction) (*Router, error) {
     //http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 10000
     //http.DefaultTransport.(*http.Transport).TLSHandshakeTimeout = 0 * time.Second
 
+    // ARRIVAL TIME
+    //router.requestReception = logrus.New()
+    //router.requestReception.SetLevel(logrus.InfoLevel)
+    //router.requestReception.SetFormatter(&logrus.JSONFormatter{})
+
     return router, nil
 }
 
@@ -94,7 +105,7 @@ func matchTLSConst(input uint16) string {
         return "VersionTLS12"
     case 0x0304:
         return "VersionTLS13"
-    // TLS CIPHER SUITES
+    // TLS CIPHER SUITES18
     case 0x0005:
         return "TLS_RSA_WITH_RC4_128_SHA"
     case 0x000a:
@@ -139,6 +150,7 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
     //     drop the packet
 
 //    fmt.Println(req.Header.Get("sfp"))
+    //router.requestReception.Infof("%v", time.Now().UnixNano())
 
     forward := router.sf.ApplyFunction(w, req)          // Analyze request with the DPI functionality
     if !forward {

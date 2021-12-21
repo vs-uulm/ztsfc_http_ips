@@ -1,0 +1,15 @@
+system_logger:
+  system_logger_logging_level: debug
+  system_logger_destination: stdout
+  system_logger_format: text
+
+sf:
+  listen_addr: ":8443"
+  server:
+    cert_shown_by_sf:             ./certs/sf1.crt
+    privkey_for_cert_shown_by_sf: ./certs/sf1.key
+    certs_sf_accepts:             ./certs/ca.crt
+  client:
+    cert_shown_by_sf:             ./certs/sf1.crt
+    privkey_for_cert_shown_by_sf: ./certs/sf1.key
+    certs_sf_accepts:             ./certs/ca.crt

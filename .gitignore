@@ -15,4 +15,21 @@
 # vendor/
 *.pprof
 *.log
-ztsfc_http_sf
+
+# Certificates
+/certs/*
+!/certs/.gitkeep
+
+# Configuration files
+/config/*
+!/config/example-conf.yml
+
+# Executables
+/main
+
+
+
+
+
+### TEMP (*.go files from the previous version of the repo)
+*.go-old

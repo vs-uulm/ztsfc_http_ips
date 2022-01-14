@@ -1,11 +1,11 @@
-package detector
+package dpidetector
 
 import (
 	"fmt"
 	"regexp"
 	"strings"
 
-	"github.com/vs-uulm/ztsfc_http_ips/internal/app/logdpi"
+	"github.com/vs-uulm/ztsfc_http_ips/internal/app/dpilogger"
 )
 
 /*
@@ -14,7 +14,7 @@ Preprocessor are suspicious. Therefore, all inputs are checked according to the 
 */
 
 type Detector struct {
-	logDPI *logdpi.LogDPI
+	dpiLogger *dpilogger.DPILogger
 }
 
 /*
@@ -31,11 +31,11 @@ func (detector *Detector) DetectPathTraversal(inputs []string) (detection bool) 
 			// Check, if a pattern for path traversal matches to a user-input
 			match := strings.Contains(input, pattern)
 			if match {
-				detector.logDPI.Log("!! Path traversal match !!")
+				detector.dpiLogger.Log("!! Path traversal match !!")
 				fmt.Println("!! Path traversal match !!")
-				detector.logDPI.Log("--Pattern: " + pattern)
+				detector.dpiLogger.Log("--Pattern: " + pattern)
 				fmt.Println("--Pattern: " + pattern)
-				detector.logDPI.Log("--Input: " + input)
+				detector.dpiLogger.Log("--Input: " + input)
 				fmt.Println("--Input: " + input)
 
 				detection = true
@@ -59,11 +59,11 @@ func (detector *Detector) DetectSQLInjection(inputs []string) (detection bool) {
 			// Check, if a regular expression for SQL-Injection matches with a user-input
 			matched, _ := regexp.MatchString(rule, input)
 			if matched {
-				detector.logDPI.Log("!! SQL injection match !!")
+				detector.dpiLogger.Log("!! SQL injection match !!")
 				fmt.Println("!! SQL injection match !!")
-				detector.logDPI.Log("--Pattern: " + rule)
+				detector.dpiLogger.Log("--Pattern: " + rule)
 				fmt.Println("--Pattern: " + rule)
-				detector.logDPI.Log("--Input: " + input)
+				detector.dpiLogger.Log("--Input: " + input)
 				fmt.Println("--Input: " + input)
 
 				detection = true
@@ -73,6 +73,6 @@ func (detector *Detector) DetectSQLInjection(inputs []string) (detection bool) {
 	return detection
 }
 
-func NewDetector(_logDPI *logdpi.LogDPI) Detector {
-	return Detector{logDPI: _logDPI}
+func New(_logDPI *dpilogger.DPILogger) Detector {
+	return Detector{dpiLogger: _logDPI}
 }

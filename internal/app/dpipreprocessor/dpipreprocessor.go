@@ -1,4 +1,4 @@
-package preprocessor
+package dpipreprocessor
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/vs-uulm/ztsfc_http_ips/internal/app/logdpi"
+	"github.com/vs-uulm/ztsfc_http_ips/internal/app/dpilogger"
 )
 
 /*
@@ -17,7 +17,11 @@ analysis.
 */
 
 type Preprocessor struct {
-	logDPI *logdpi.LogDPI
+	dpiLogger *dpilogger.DPILogger
+}
+
+func New(_logDPI *dpilogger.DPILogger) *Preprocessor {
+	return &Preprocessor{dpiLogger: _logDPI}
 }
 
 /*
@@ -33,23 +37,22 @@ func (preprocessor *Preprocessor) ExtractConvertData(request *http.Request) (dat
 	reqURL, err := url.PathUnescape(request.URL.Path) // Extract URL-Path and convert URL-encoded characters to the ascii-representation
 	if err != nil {                                   // In case of an error, the unescaped URL-Path is used
 		reqURL = request.URL.Path
-		preprocessor.logDPI.Log("URL-Path decoding failed: " + reqURL)
+		preprocessor.dpiLogger.Log("URL-Path decoding failed: " + reqURL)
 	}
 
 	query, err := url.QueryUnescape(request.URL.RawQuery) // Extract URL-Query and convert URL-encoded characters to the ascii-representation
 	if err != nil {                                       // In case of an error, the unescaped query is used
 		query = request.URL.RawQuery
-		preprocessor.logDPI.Log("URL-Query decoding failed: " + query)
+		preprocessor.dpiLogger.Log("URL-Query decoding failed: " + query)
 	}
 
 	fragment, err := url.QueryUnescape(request.URL.Fragment) // Extract URL-Fragment and convert URL-encoded characters to the ascii-representation
 	if err != nil {                                          // In case of an error, the unescaped fragment is used
 		fragment = request.URL.Fragment
-		preprocessor.logDPI.Log("URL-Fragment decoding failed: " + fragment)
+		preprocessor.dpiLogger.Log("URL-Fragment decoding failed: " + fragment)
 	}
 
 	urlData := strings.ToLower(reqURL + query + fragment) // Convert URL-parameters to lower case
-	//	fmt.Println(urlData)
 
 	// Extract all header data except cookies, convert URL-encoded parts to the ascii-representation and convert inputs to lower case
 	var headerData []string
@@ -59,14 +62,12 @@ func (preprocessor *Preprocessor) ExtractConvertData(request *http.Request) (dat
 				decData, err := url.QueryUnescape(value) // Convert URL-encoded characters to the ascii-representation
 				if err != nil {                          // In case of an error, the unescaped header is used
 					decData = value
-					preprocessor.logDPI.Log("Header decoding failed: " + decData)
+					preprocessor.dpiLogger.Log("Header decoding failed: " + decData)
 				}
 				headerData = append(headerData, strings.ToLower(decData)) // Convert inputs to lower case
 			}
 		}
 	}
-
-	//	fmt.Println(headerData)
 
 	// Extract all Cookies, convert percent-encoded parts to the ascii-representation and convert inputs to lower case
 	var cookies []string
@@ -74,7 +75,7 @@ func (preprocessor *Preprocessor) ExtractConvertData(request *http.Request) (dat
 		decCookie, err := url.QueryUnescape(c.Value) // Convert URL-encoded characters to the ascii-representation
 		if err != nil {                              // In case of an error, the unescaped cookie is used
 			decCookie = c.Value
-			preprocessor.logDPI.Log("Cookie decoding failed: " + decCookie)
+			preprocessor.dpiLogger.Log("Cookie decoding failed: " + decCookie)
 		}
 		cookies = append(cookies, strings.ToLower(decCookie)) // data converted to lower case
 	}
@@ -82,7 +83,7 @@ func (preprocessor *Preprocessor) ExtractConvertData(request *http.Request) (dat
 	// Extract Body - URL-encoded characters in body are NOT decoded to be comparable to SNORT
 	body, err := ioutil.ReadAll(request.Body)
 	if err != nil {
-		preprocessor.logDPI.Log("Body could not be read")
+		preprocessor.dpiLogger.Log("Body could not be read")
 	}
 	bodyData := strings.ToLower(string(body)) // Convert body to lower case
 	if bodyData != "" {
@@ -98,8 +99,4 @@ func (preprocessor *Preprocessor) ExtractConvertData(request *http.Request) (dat
 	data = append(data, cookies...)
 
 	return data
-}
-
-func NewPreprocessor(_logDPI *logdpi.LogDPI) *Preprocessor {
-	return &Preprocessor{logDPI: _logDPI}
 }

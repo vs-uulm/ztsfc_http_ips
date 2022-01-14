@@ -27,9 +27,5 @@
 # Executables
 /main
 
-
-
-
-
-### TEMP (*.go files from the previous version of the repo)
-*.go-old
+# Visual Studio Code settings
+/.vscode

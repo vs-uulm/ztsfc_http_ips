@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/vs-uulm/ztsfc_http_ips/internal/app/config"
-	"github.com/vs-uulm/ztsfc_http_ips/internal/app/dpi"
 	confInit "github.com/vs-uulm/ztsfc_http_ips/internal/app/init"
 	"github.com/vs-uulm/ztsfc_http_ips/internal/app/router"
 	"github.com/vs-uulm/ztsfc_http_ips/internal/app/yaml"
@@ -44,7 +43,7 @@ func init() {
 	}
 	confInit.SetupCloseHandler(sysLogger)
 
-	sysLogger.Debugf("loading logger configuration from '%s' - OK", confFilePath)
+	sysLogger.Debugf("loading DPI configuration from '%s' - OK", confFilePath)
 
 	// Create Certificate Pools for the CA certificates used by the SF Logger
 	config.Config.CAcertPoolPepAcceptsFromExt = x509.NewCertPool()
@@ -60,23 +59,17 @@ func init() {
 func main() {
 	//  defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
 
-	// Create Zero Trust Service Function_
-	_, err := dpi.NewDPI()
-	if err != nil {
-		return
-	}
-
-	// Create a new instance of the HTTP Logger service function
-	httpLoggerSF, err := router.New(sysLogger)
+	// Create a new instance of the HTTP DPI service function
+	httpDPISF, err := router.New(sysLogger)
 	if err != nil {
 		sysLogger.Error(err)
 		return
 	}
-	sysLogger.Debug("main: main(): new router is successfully created")
+	sysLogger.Infof("an DPI SF is running on '%s'", config.Config.SF.ListenAddr)
 
-	http.Handle("/", httpLoggerSF)
+	http.Handle("/", httpDPISF)
 
-	err = httpLoggerSF.ListenAndServeTLS()
+	err = httpDPISF.ListenAndServeTLS()
 	if err != nil {
 		sysLogger.Error(err)
 	}

@@ -1,4 +1,4 @@
-package detector
+package dpidetector
 
 /*
 This file represents the signatures for the Detector. Here the patterns and regular expressions are defined, which are

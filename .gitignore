@@ -15,4 +15,17 @@
 # vendor/
 *.pprof
 *.log
-ztsfc_http_sf
+
+# Certificates
+/certs/*
+!/certs/.gitkeep
+
+# Configuration files
+/config/*
+!/config/example-conf.yml
+
+# Executables
+/main
+
+# Visual Studio Code settings
+/.vscode

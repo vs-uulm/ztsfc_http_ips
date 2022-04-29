@@ -1,5 +1,5 @@
 GO_BUILD_TARGET=./cmd/ztsfc_http_ips/main.go
-DOCKER_BUILD_TARGET=vs-uulm/ztsfc_http_ips:latest
+DOCKER_BUILD_TARGET=vs-uulm/ztsfc_http_sf_ips:latest
 
 .PHONY: main
 main: go docker
